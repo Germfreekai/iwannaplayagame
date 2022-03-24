@@ -25,8 +25,10 @@ int main(int argc, char *argv[])
 				continue; /*Skip current directory and parent directory*/
 		}
 		if(drnt->d_type == DT_DIR){
+        printf("%s\n", drnt->d_name);
 		    dircount ++; /*Count if current file in the stream is a directory (DT_DIR)*/
 		}
+
   }
   printf("Number of dirs: %d\n",dircount);
   closedir(dir);
