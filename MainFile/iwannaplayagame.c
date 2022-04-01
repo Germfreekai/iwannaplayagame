@@ -6,16 +6,23 @@
 #include <unistd.h>
 #include <limits.h>
 #include <signal.h>
+#include <time.h>
 
 // Msg functions
 void WelcomePlayer(); 
-void Explanation(); 
+void TalkToUser_Helper(char* msg); 
+void Questions(int option);
 
 // Threads
 void* TalkToUser(void* vargs);
 
 // Signals
 void signalHandler(int sig); 
+
+// Main game
+void PlayGame(); 
+void Consequences(int casw, int iasw); 
+void hola(); 
 
 int main(void)
 {
@@ -25,12 +32,13 @@ int main(void)
 	signal(SIGTERM, signalHandler); 
 
 	WelcomePlayer(); 
-	Explanation(); 
 
-	while(1)
-	{
-		pause(); 
-	}
+	PlayGame(); 
+
+	//while(1)
+	//{
+	//	pause(); 
+	//}
 
 	return EXIT_SUCCESS; 
 
@@ -46,6 +54,18 @@ void signalHandler(int sig)
 
 }
 
+void TalkToUser_Helper(char* msg)
+{
+
+	pthread_t ttu_t; 
+	int ttu; 
+
+	pthread_create(&ttu_t, NULL, TalkToUser, (void*)msg); 
+
+	pthread_join(ttu_t, NULL); 
+
+}
+
 void* TalkToUser(void* vargs)
 {
 
@@ -57,7 +77,7 @@ void* TalkToUser(void* vargs)
 		printf("%c", msg[i]); 
 		fflush(stdout); 
 
-		usleep(100000); 
+		usleep(10000); 
 
 	}
 
@@ -72,42 +92,167 @@ void WelcomePlayer()
 	pthread_t ttu_t; 
 	int ttu; 
 
-	pthread_t ttu2_t; 
-	int ttu2; 
-
 	char* welcome_msg = "I wanna play a little game with you... "; 
+	char* explain = "I will make you some questions\nIf you fail to answer... you might face some consequences\n"; 
+	char* consequences = "There are three possible consequences...\n[1] You will drown in garbage\n[2] I will take away something from you\n[3] BOOM!\n"; 
 
 	// Hostname
 	int size = 200; 
 	char* hostname = (char*)calloc(size,sizeof(char)); 
 	gethostname(hostname, size); 
 
-	ttu = pthread_create(&ttu_t, NULL, TalkToUser, (void*)welcome_msg); 
-	pthread_join(ttu_t, NULL); 
-
-	ttu2 = pthread_create(&ttu2_t, NULL, TalkToUser, (void*)hostname);
-	pthread_join(ttu2_t, NULL); 
+	TalkToUser_Helper(welcome_msg); 
+	TalkToUser_Helper(hostname);
 
 	printf("\n"); 
 	
+	TalkToUser_Helper(explain); 
+	TalkToUser_Helper(consequences); 
+
 	free(hostname); 
 
 }
 
-void Explanation()
+void Questions(int option)
 {
 
-	pthread_t ttu_t; 
-	int ttu; 
+	char* berghain = "Where is Berghain?\nR: ";
+	char* python = "In what language was Python first developed?\nR: "; 
+	char* threads = "What's the flag for commpiling with threads?\nR: ";
+	char* random = "How many correct answers have you had?\nR: ";
 
-	char* explain = "I will make you some questions\nIf you fail to answer... you might face some consequences\n"; 
+	switch(option)
+	{
 
-	ttu = pthread_create(&ttu_t, NULL, TalkToUser, (void*)explain); 
-	pthread_join(ttu_t, NULL); 
+		case 1:
+			TalkToUser_Helper(berghain);
+			break;
+		case 2:
+			TalkToUser_Helper(python);
+			break;
+		case 3:
+			TalkToUser_Helper(threads);
+			break;
+		case 4: 
+			TalkToUser_Helper(random);
+			break;
+		default:
+			printf("Invalid option\n");
 
-	char* consequences = "There are three possible consequences...\n[1] You will drown in garbage\n[2] I will take away something from you\n[3] BOOM!\n"; 
+	}
 
-	ttu = pthread_create(&ttu_t, NULL, TalkToUser, (void*)consequences); 
-	pthread_join(ttu_t, NULL); 
+}
+
+void PlayGame()
+{
+
+	int casw; 
+	casw = 0; 
+	int iasw;
+	iasw = 0;
+
+	char* asw1 = (char*)calloc(30,sizeof(char)); 
+	
+	Questions(1);
+	scanf("%[^\n]", asw1);
+	getchar(); 
+
+	if(!strcmp(asw1, "Berlin"))
+		casw++;
+	else
+		iasw++;
+
+	char asw2;
+	asw2 = '\0';
+
+	Questions(2);
+	scanf("%c", &asw2); 
+	getchar();
+
+	if(asw2 == 'C')
+		casw++;
+	else
+		iasw++;
+
+	char* asw3 = (char*)calloc(30,sizeof(char));
+
+	Questions(3);
+	scanf("%[^\n]", asw3);
+	getchar(); 
+
+	if(!strcmp(asw3,"-lpthread"))
+		casw++;
+	else
+		iasw++;
+
+	int asw4; 
+	asw4 = 0; 
+
+	Questions(4);
+	scanf("%d", &asw4); 
+
+	if(asw4 == casw)
+		casw++; 
+	else
+		iasw++;
+
+	printf("Casw: %d || Iasw: %d\n", 
+			casw,
+			iasw);
+
+	Consequences(casw, iasw);
+
+	free(asw1);
+	free(asw3);
+
+}
+
+void Consequences(int casw, int iasw)
+{
+
+	if(iasw >= casw)
+	{
+
+		srand(time(NULL)); 
+		int r = rand() % 3 + 1; 
+
+		printf("Random: %d\n", r); 
+
+		switch(r)
+		{
+
+			case 1:
+				hola();
+				printf("Eat garbage!! \n"); 
+				break;	
+			case 2: 
+				hola();
+				printf("I will take smth from you!! \n"); 
+				break; 
+			case 3:
+				hola();
+				printf("Alright... I hope you saved your work\n"); 
+				sleep(3);
+				break; 
+			default:
+				printf("As I am not sure... BYE!\n");
+
+		}
+
+	}
+	else
+	{
+		char* bye = "You are safe...\nAren't you";
+		
+		TalkToUser_Helper(bye);
+
+	}
+
+}
+
+void hola()
+{
+
+	printf("You loser\n");
 
 }
