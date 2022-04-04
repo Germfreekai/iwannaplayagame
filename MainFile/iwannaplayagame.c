@@ -7,6 +7,7 @@
 #include <limits.h>
 #include <signal.h>
 #include <time.h>
+#include <sys/wait.h>
 
 // Msg functions
 void WelcomePlayer(); 
@@ -22,7 +23,7 @@ void signalHandler(int sig);
 // Main game
 void PlayGame(); 
 void Consequences(int casw, int iasw); 
-void hola(); 
+void CreateChild();
 
 int main(void)
 {
@@ -31,15 +32,25 @@ int main(void)
 	signal(SIGINT, signalHandler); 
 	signal(SIGTERM, signalHandler); 
 
+	// Create Child
+	CreateChild(); 
+
 	WelcomePlayer(); 
 
 	PlayGame(); 
 
-	//while(1)
-	//{
-	//	pause(); 
-	//}
+	int timer = 100;
+	char* lastGoodBye = "Now I'm wondering what happens when this timer gets to 0...\nWanna find out?";
+	TalkToUser_Helper(lastGoodBye);
 
+	while(timer > 0)
+	{
+
+		printf("\r%d", timer--);
+
+	}
+
+	printf("BOOM\nJAJAJA It was just a joke... sort of...\n");
 	return EXIT_SUCCESS; 
 
 }
@@ -222,15 +233,12 @@ void Consequences(int casw, int iasw)
 		{
 
 			case 1:
-				hola();
 				printf("Eat garbage!! \n"); 
 				break;	
 			case 2: 
-				hola();
 				printf("I will take smth from you!! \n"); 
 				break; 
 			case 3:
-				hola();
 				printf("Alright... I hope you saved your work\n"); 
 				sleep(3);
 				break; 
@@ -250,9 +258,46 @@ void Consequences(int casw, int iasw)
 
 }
 
-void hola()
+void CreateChild()
 {
 
-	printf("You loser\n");
+	system("gcc -o devilchild devilchild.c -lpthread");
+
+	// IDs
+	pid_t pid;
+	pid = fork(); 
+
+	if(pid == -1)
+	{
+
+		printf("Damn, am I sterile?\n");
+		fflush(stdout);
+
+	}
+	else if(pid == 0) // child (sacrifice)
+	{
+
+		// Args
+		char* args[] = {"/.devilchild", NULL, NULL};
+
+		char* childmsg = "Did you know that I am a father? But my son is a little bit.. evil\n";
+		TalkToUser_Helper(childmsg);
+
+		if(execv(args[0], args) == 0)
+		{
+
+			printf("Damn, am I Sterile?\n");
+
+		}
+
+		exit(EXIT_SUCCESS);
+
+	}
+	else // father
+	{
+
+		wait(NULL);
+
+	}
 
 }
