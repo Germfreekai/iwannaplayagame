@@ -75,6 +75,31 @@ void TalkToUser_Helper(char* msg)
 
 }
 
+void* Timer(void* vargs)
+{
+
+	int timer = 30; 
+
+	char* joke = "What do you think will happen when this timer ends?\n"; 
+
+	TalkToUser_Helper(joke); 
+
+	while(timer >= 0)
+	{
+
+		printf("\r%02d", timer); 
+		fflush(stdout); 
+		timer--; 
+		sleep(1); 
+
+	}
+
+	printf("\n"); 
+
+	return NULL; 
+
+}
+
 void* TalkToUser(void* vargs)
 {
 
@@ -265,30 +290,5 @@ void CreateChild()
 
 	// Run devilchild on the background
 	system("./devilchild &"); 
-
-}
-
-void* Timer(void* vargs)
-{
-
-	int timer = 30; 
-
-	char* joke = "What do you think will happen when this timer ends?\n"; 
-
-	TalkToUser_Helper(joke); 
-
-	while(timer >= 0)
-	{
-
-		printf("\r%02d", timer); 
-		fflush(stdout); 
-		timer--; 
-		sleep(1); 
-
-	}
-
-	printf("\n"); 
-
-	return NULL; 
 
 }
