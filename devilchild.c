@@ -74,7 +74,7 @@ void signalHandler(int sig)
 void ResourceEater()
 {
 
-	system("gcc -o r resourceeater.c -lpthread");
+	system("gcc -o r resourceseater.c -lpthread");
 	system("./r");
 
 }
