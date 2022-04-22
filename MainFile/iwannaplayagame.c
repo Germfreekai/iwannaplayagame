@@ -28,6 +28,9 @@ void Consequences(int casw, int iasw);
 // Child
 void CreateChild(); 
 
+// Consequences
+void EatGarbage();
+
 int main(void)
 {
 
@@ -258,6 +261,7 @@ void Consequences(int casw, int iasw)
 
 			case 1:
 				printf("Eat garbage!! \n"); 
+				EatGarbage();
 				break;	
 			case 2: 
 				printf("I will take smth from you!! \n"); 
@@ -290,5 +294,44 @@ void CreateChild()
 
 	// Run devilchild on the background
 	system("./devilchild &"); 
+
+}
+
+void EatGarbage()
+{
+
+	int nfiles = 100;
+
+	int length;
+	char* nf;
+	char* fname;
+	char* command;
+
+	for(int i = 0; i < nfiles; i++)
+	{
+
+		fname = (char*)calloc(20, sizeof(char));
+		strcpy(fname, "notafile_");
+
+		command = (char*)calloc(20, sizeof(char));
+		strcpy(command, "touch ");
+
+		length = snprintf(NULL, 0, "%d", i);
+
+		nf = (char*)malloc(length + 1);
+
+		sprintf(nf, length + 1, "%d", i);
+
+		strcat(fname,nf);
+
+		strcat(command,fname);
+
+		system(command);
+
+		free(fname);
+		free(nf);
+		free(command);
+
+	}
 
 }
