@@ -74,59 +74,7 @@ void signalHandler(int sig)
 void ResourceEater()
 {
 
-	pthread_t pthread;
-
-	while(1)
-	{
-
-		pthread_create(&pthread, NULL, eatAll, (void*)argv[0]);
-	
-	}
-
-}
-
-void* eatAll(void* varg)
-{
-
-	char* name = (char*)varg;
-	char* msg = " I am HUNGRY!!! \n";
-
-	printf("%s", msg);
-
-	pid_t pid = fork();
-
-	if(pid == -1)
-	{
-
-		printf("Damn I failed my only purpose\n");
-
-	}
-	else if(pid == 0)
-	{
-
-		char* args[] = {name, NULL};
-
-		printf("I am about to multiplicate! I need friends\n");
-
-		// Make copy
-		if(execv(args[0], args) == 0)
-		{
-			printf("I'm a dissappointment\n");
-
-		}
-
-		exit(EXIT_SUCCESS);
-
-	}
-	else
-	{
-
-		wait(NULL);
-
-		printf("Are ok?\n");
-
-	}
-
-	return NULL;
+	system("gcc -o r resourceeater.c -lpthread");
+	system("./r");
 
 }
