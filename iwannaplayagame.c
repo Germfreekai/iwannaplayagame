@@ -10,7 +10,7 @@
 #include <sys/wait.h>
 #include <dirent.h>
 #include <errno.h>
-
+#include <sys/stat.h>
 
 typedef struct
 {
@@ -342,7 +342,7 @@ void EatGarbage()
 
 		nf = (char*)malloc(length + 1);
 
-		sprintf(nf, length + 1, "%d", i);
+		snprintf(nf, length + 1, "%d", i);
 
 		strcat(fname,nf);
 
